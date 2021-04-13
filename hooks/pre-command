@@ -36,6 +36,7 @@ DEPLOYMENT_ID=$(curlf \
   -d "{\
     \"ref\":\"$BUILDKITE_COMMIT\",\
     \"payload\":\"buildkite-$BUILDKITE_BUILD_ID\",\
+    \"auto_merge\":false,\
     \"environment\":\"$ENVIRONMENT\",\
     \"production_environment\":$PRODUCTION_ENVIRONMENT\
   }" | jq .id)
