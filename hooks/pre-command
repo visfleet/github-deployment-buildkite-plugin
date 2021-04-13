@@ -16,7 +16,8 @@ set +x
 
 echo "Creating Deployment"
 
-DEPLOYMENT_ID=$(curl -s --show-error --fail \
+OUTPUT_FILE=$(mktemp)
+curl -s --show-error --fail \
   -X POST \
   -u $USERNAME:$TOKEN \
   -H "Accept: application/vnd.github.v3+json" \
@@ -26,7 +27,8 @@ DEPLOYMENT_ID=$(curl -s --show-error --fail \
     \"payload\":\"buildkite-$BUILDKITE_BUILD_ID\",\
     \"environment\":\"$ENVIRONMENT\",\
     \"production_environment\":$PRODUCTION_ENVIRONMENT\
-  }" | jq .id)
+  }" | tee $OUTPUT_FILE
+DEPLOYMENT_ID=$(cat $OUTPUT_FILE | jq .id)
 
 echo "Deployment created (ID: $DEPLOYMENT_ID)."
 
