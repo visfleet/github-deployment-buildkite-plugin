@@ -16,6 +16,7 @@ steps:
           username-env: GITHUB_USERNAME
           token-env: GITHUB_TOKEN
           # See https://docs.github.com/en/rest/reference/repos#create-a-deployment for description of the below
+          ref: v1.0.0 # optional (default: git commit SHA hash)
           environment: qa # optional (default: "production")
           environment_url: https://dev.ailo.io # optional (default: null)
           production_environment: false # optional (default: `environment == "prod" || environment == "production"`)

@@ -21,6 +21,7 @@ TOKEN=$(printenv ${BUILDKITE_PLUGIN_GITHUB_DEPLOYMENT_TOKEN_ENV:-"GITHUB_TOKEN"}
 REPO_ORG=$(basename $(dirname $BUILDKITE_REPO) | sed 's/git@github.com://')
 REPO_NAME=$(basename $BUILDKITE_REPO .git)
 
+REF=${BUILDKITE_PLUGIN_GITHUB_DEPLOYMENT_REF:-$BUILDKITE_COMMIT}
 ENVIRONMENT=${BUILDKITE_PLUGIN_GITHUB_DEPLOYMENT_ENVIRONMENT:-"production"}
 PRODUCTION_ENVIRONMENT=${BUILDKITE_PLUGIN_GITHUB_DEPLOYMENT_PRODUCTION_ENVIRONMENT:-$(
   if [[ $ENVIRONMENT == "prod" || $ENVIRONMENT == "production" ]]; then echo true; else echo false; fi
@@ -35,7 +36,7 @@ DEPLOYMENT_ID=$(curlf \
   -H "Accept: application/vnd.github.v3+json" \
   https://api.github.com/repos/$REPO_ORG/$REPO_NAME/deployments \
   -d "{\
-    \"ref\":\"$BUILDKITE_COMMIT\",\
+    \"ref\":\"$REF\",\
     \"payload\":\"buildkite-$BUILDKITE_BUILD_ID\",\
     \"auto_merge\":false,\
     \"required_contexts\":[],\

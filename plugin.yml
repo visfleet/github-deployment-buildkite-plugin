@@ -8,6 +8,8 @@ configuration:
       type: string
     token-env:
       type: string
+    ref:
+      type: string
     environment:
       type: string
     environment_url:
