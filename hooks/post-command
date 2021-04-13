@@ -22,6 +22,7 @@ REPO_ORG=$(basename $(dirname $BUILDKITE_REPO) | sed 's/git@github.com://')
 REPO_NAME=$(basename $BUILDKITE_REPO .git)
 
 ENVIRONMENT=${BUILDKITE_PLUGIN_GITHUB_DEPLOYMENT_ENVIRONMENT:-"production"}
+ENVIRONMENT_URL=${BUILDKITE_PLUGIN_GITHUB_DEPLOYMENT_ENVIRONMENT_URL:-""}
 PRODUCTION_ENVIRONMENT=${BUILDKITE_PLUGIN_GITHUB_DEPLOYMENT_PRODUCTION_ENVIRONMENT:-$(
   if [[ $ENVIRONMENT == "prod" || $ENVIRONMENT == "production" ]]; then echo true; else echo false; fi
 )}
@@ -46,7 +47,8 @@ curlf \
   -d "{\
     \"state\":\"$STATE\",\
     \"log_url\":\"$BUILDKITE_BUILD_URL\",\
-    \"environment\":\"$ENVIRONMENT\"\
+    \"environment\":\"$ENVIRONMENT\",\
+    \"environment_url\":\"$ENVIRONMENT_URL\"\
   }"
 
 echo "Deployment status created (state: $STATE)"

@@ -17,7 +17,9 @@ steps:
           token-env: GITHUB_TOKEN
           # See https://docs.github.com/en/rest/reference/repos#create-a-deployment for description of the below
           environment: qa # optional (default: "production")
+          environment_url: https://dev.ailo.io # optional (default: null)
           production_environment: false # optional (default: `environment == "prod" || environment == "production"`)
+          transient_environment: false # optional (default: false)
 ```
 
 ## Developing

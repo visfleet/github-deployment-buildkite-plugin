@@ -25,6 +25,7 @@ ENVIRONMENT=${BUILDKITE_PLUGIN_GITHUB_DEPLOYMENT_ENVIRONMENT:-"production"}
 PRODUCTION_ENVIRONMENT=${BUILDKITE_PLUGIN_GITHUB_DEPLOYMENT_PRODUCTION_ENVIRONMENT:-$(
   if [[ $ENVIRONMENT == "prod" || $ENVIRONMENT == "production" ]]; then echo true; else echo false; fi
 )}
+TRANSIENT_ENVIRONMENT=${BUILDKITE_PLUGIN_GITHUB_DEPLOYMENT_TRANSIENT_ENVIRONMENT:-"false"}
 
 echo "Creating deployment..."
 
@@ -39,7 +40,8 @@ DEPLOYMENT_ID=$(curlf \
     \"auto_merge\":false,\
     \"required_contexts\":[],\
     \"environment\":\"$ENVIRONMENT\",\
-    \"production_environment\":$PRODUCTION_ENVIRONMENT\
+    \"production_environment\":$PRODUCTION_ENVIRONMENT,\
+    \"transient_environment\":$TRANSIENT_ENVIRONMENT\
   }" | jq .id)
 
 echo "Deployment created (ID: $DEPLOYMENT_ID)."

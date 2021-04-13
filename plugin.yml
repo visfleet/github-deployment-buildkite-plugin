@@ -10,6 +10,10 @@ configuration:
       type: string
     environment:
       type: string
+    environment_url:
+      type: string
     production_environment:
+      type: boolean
+    transient_environment:
       type: boolean
   additionalProperties: false
