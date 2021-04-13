@@ -1,0 +1,25 @@
+#!/bin/sh
+
+set -euo pipefail
+
+USERNAME=$(printenv ${BUILDKITE_PLUGIN_GITHUB_DEPLOYMENT_USERNAME_ENV:-"GITHUB_USERNAME"})
+TOKEN=$(printenv ${BUILDKITE_PLUGIN_GITHUB_DEPLOYMENT_TOKEN_ENV:-"GITHUB_TOKEN"})
+REPO_ORG=$(basename $(dirname $BUILDKITE_REPO) | sed 's/git@github.com://')
+REPO_NAME=$(basename $BUILDKITE_REPO .git)
+
+ENVIRONMENT=$BUILDKITE_PLUGIN_GITHUB_DEPLOYMENT_ENVIRONMENT
+PRODUCTION_ENVIRONMENT=${BUILDKITE_PLUGIN_GITHUB_DEPLOYMENT_PRODUCTION_ENVIRONMENT:-$(
+  [[ $ENVIRONMENT == "prod" || $ENVIRONMENT == "production" ]]; then echo true; else echo false; fi
+)}
+
+curl \
+  -X POST \
+  -u $USERNAME:$TOKEN \
+  -H "Accept: application/vnd.github.v3+json" \
+  https://api.github.com/repos/$REPO_ORG/$REPO_NAME/deployments \
+  -d "{\
+    \"ref\":\"$BUILDKITE_COMMIT\",\
+    \"payload\":\"buildkite-$BUILDKITE_BUILD_ID\",\
+    \"environment\":\"$ENVIRONMENT\",\
+    \"production_environment\":\"$PRODUCTION_ENVIRONMENT\"\
+  }"

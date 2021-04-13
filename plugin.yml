@@ -1,0 +1,17 @@
+name: GitHub Deployment API
+description: Creates GitHub deployment before/after a Buildkite step is executed.
+author: https://github.com/ailohq
+requirements: []
+configuration:
+  properties:
+    username:
+      type: string
+    token:
+      type: string
+    target_url:
+      type: string
+    description:
+      type: string
+    context:
+      type: string
+  additionalProperties: false
