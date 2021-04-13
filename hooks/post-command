@@ -11,18 +11,12 @@ ENVIRONMENT=${BUILDKITE_PLUGIN_GITHUB_DEPLOYMENT_ENVIRONMENT:-"production"}
 PRODUCTION_ENVIRONMENT=${BUILDKITE_PLUGIN_GITHUB_DEPLOYMENT_PRODUCTION_ENVIRONMENT:-$(
   if [[ $ENVIRONMENT == "prod" || $ENVIRONMENT == "production" ]]; then echo true; else echo false; fi
 )}
+STATE=$(if [[ $BUILDKITE_COMMAND_EXIT_STATUS == "0" ]]; then echo success; else echo failure; fi)
 
 DEPLOYMENT_ID=$(curl -s --fail \
-  -X POST \
   -u $USERNAME:$TOKEN \
   -H "Accept: application/vnd.github.v3+json" \
-  https://api.github.com/repos/$REPO_ORG/$REPO_NAME/deployments \
-  -d "{\
-    \"ref\":\"$BUILDKITE_COMMIT\",\
-    \"payload\":\"buildkite-$BUILDKITE_BUILD_ID\",\
-    \"environment\":\"$ENVIRONMENT\",\
-    \"production_environment\":$PRODUCTION_ENVIRONMENT\
-  }" | jq .id)
+  "https://api.github.com/repos/$REPO_ORG/$REPO_NAME/deployments?sha=${BUILDKITE_COMMIT}&environment=${ENVIRONMENT}&per_page=100" | jq 'first(.[] | select(.payload="buildkite-test-buildkite-build-id").id)')
 
 curl -s --fail \
   -X POST \
@@ -30,8 +24,7 @@ curl -s --fail \
   -H "Accept: application/vnd.github.ant-man-preview+json" \
   https://api.github.com/repos/$REPO_ORG/$REPO_NAME/deployments/${DEPLOYMENT_ID}/statuses \
   -d "{\
-    \"state\":\"pending\",\
-    \"auto_inactive\":\"false\",\
+    \"state\":\"$STATE\",\
     \"log_url\":\"$BUILDKITE_BUILD_URL\",\
     \"environment\":\"$ENVIRONMENT\"\
   }"

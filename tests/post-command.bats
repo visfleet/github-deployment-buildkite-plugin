@@ -10,8 +10,9 @@ load '/usr/local/lib/bats/load.bash'
   export BUILDKITE_COMMIT=6a1afef54b9f8e9bd3378751bd5c698e3049a2f7
   export BUILDKITE_BUILD_ID=test-buildkite-build-id
   export BUILDKITE_BUILD_URL=https://buildkite.com/ailohq/github-deployment-buildkite-plugin/builds/test-buildkite-build-id
+  export BUILDKITE_COMMAND_EXIT_STATUS=0
 
-  run "$PWD/hooks/pre-command"
+  run "$PWD/hooks/post-command"
 
   assert_success
 }

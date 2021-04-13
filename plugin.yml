@@ -4,14 +4,12 @@ author: https://github.com/ailohq
 requirements: []
 configuration:
   properties:
-    username:
+    username-env:
       type: string
-    token:
+    token-env:
       type: string
-    target_url:
+    environment:
       type: string
-    description:
-      type: string
-    context:
-      type: string
+    production_environment:
+      type: boolean
   additionalProperties: false
