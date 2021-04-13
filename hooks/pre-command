@@ -7,10 +7,14 @@ TOKEN=$(printenv ${BUILDKITE_PLUGIN_GITHUB_DEPLOYMENT_TOKEN_ENV:-"GITHUB_TOKEN"}
 REPO_ORG=$(basename $(dirname $BUILDKITE_REPO) | sed 's/git@github.com://')
 REPO_NAME=$(basename $BUILDKITE_REPO .git)
 
+set -x
 ENVIRONMENT=${BUILDKITE_PLUGIN_GITHUB_DEPLOYMENT_ENVIRONMENT:-"production"}
 PRODUCTION_ENVIRONMENT=${BUILDKITE_PLUGIN_GITHUB_DEPLOYMENT_PRODUCTION_ENVIRONMENT:-$(
   if [[ $ENVIRONMENT == "prod" || $ENVIRONMENT == "production" ]]; then echo true; else echo false; fi
 )}
+set +x
+
+echo "Creating Deployment"
 
 DEPLOYMENT_ID=$(curl -s --fail \
   -X POST \
@@ -24,6 +28,8 @@ DEPLOYMENT_ID=$(curl -s --fail \
     \"production_environment\":$PRODUCTION_ENVIRONMENT\
   }" | jq .id)
 
+echo "Deployment created (ID: $DEPLOYMENT_ID)."
+
 curl -s --fail \
   -X POST \
   -u $USERNAME:$TOKEN \
@@ -35,3 +41,5 @@ curl -s --fail \
     \"log_url\":\"$BUILDKITE_BUILD_URL\",\
     \"environment\":\"$ENVIRONMENT\"\
   }"
+
+echo "Deployment status created (state: pending)"
