@@ -2,22 +2,33 @@
 
 set -euo pipefail
 
+# Curl that will return non-zero exit code,
+# but still return its' response if it fails.
+# ( https://superuser.com/a/1641410/215321 )
+curlf() {
+  OUTPUT_FILE=$(mktemp)
+  HTTP_CODE=$(curl --silent --output $OUTPUT_FILE --write-out "%{http_code}" "$@")
+  if [[ ${HTTP_CODE} -lt 200 || ${HTTP_CODE} -gt 299 ]] ; then
+    >&2 cat $OUTPUT_FILE
+    exit 22
+  fi
+  cat $OUTPUT_FILE
+  rm $OUTPUT_FILE
+}
+
 USERNAME=$(printenv ${BUILDKITE_PLUGIN_GITHUB_DEPLOYMENT_USERNAME_ENV:-"GITHUB_USERNAME"})
 TOKEN=$(printenv ${BUILDKITE_PLUGIN_GITHUB_DEPLOYMENT_TOKEN_ENV:-"GITHUB_TOKEN"})
 REPO_ORG=$(basename $(dirname $BUILDKITE_REPO) | sed 's/git@github.com://')
 REPO_NAME=$(basename $BUILDKITE_REPO .git)
 
-set -x
 ENVIRONMENT=${BUILDKITE_PLUGIN_GITHUB_DEPLOYMENT_ENVIRONMENT:-"production"}
 PRODUCTION_ENVIRONMENT=${BUILDKITE_PLUGIN_GITHUB_DEPLOYMENT_PRODUCTION_ENVIRONMENT:-$(
   if [[ $ENVIRONMENT == "prod" || $ENVIRONMENT == "production" ]]; then echo true; else echo false; fi
 )}
-set +x
 
-echo "Creating Deployment"
+echo "Creating deployment..."
 
-OUTPUT_FILE=$(mktemp)
-curl -s --show-error --fail \
+DEPLOYMENT_ID=$(curlf \
   -X POST \
   -u $USERNAME:$TOKEN \
   -H "Accept: application/vnd.github.v3+json" \
@@ -27,12 +38,13 @@ curl -s --show-error --fail \
     \"payload\":\"buildkite-$BUILDKITE_BUILD_ID\",\
     \"environment\":\"$ENVIRONMENT\",\
     \"production_environment\":$PRODUCTION_ENVIRONMENT\
-  }" | tee $OUTPUT_FILE
-DEPLOYMENT_ID=$(cat $OUTPUT_FILE | jq .id)
+  }" | jq .id)
 
 echo "Deployment created (ID: $DEPLOYMENT_ID)."
 
-curl -s --show-error --fail \
+echo "Creating deployment status..."
+
+curlf \
   -X POST \
   -u $USERNAME:$TOKEN \
   -H "Accept: application/vnd.github.ant-man-preview+json" \
