@@ -13,14 +13,14 @@ PRODUCTION_ENVIRONMENT=${BUILDKITE_PLUGIN_GITHUB_DEPLOYMENT_PRODUCTION_ENVIRONME
 )}
 STATE=$(if [[ $BUILDKITE_COMMAND_EXIT_STATUS == "0" ]]; then echo success; else echo failure; fi)
 
-DEPLOYMENT_ID=$(curl -s --fail \
+DEPLOYMENT_ID=$(curl -s --show-error --fail \
   -u $USERNAME:$TOKEN \
   -H "Accept: application/vnd.github.v3+json" \
   "https://api.github.com/repos/$REPO_ORG/$REPO_NAME/deployments?sha=${BUILDKITE_COMMIT}&environment=${ENVIRONMENT}&per_page=100" | jq 'first(.[] | select(.payload="buildkite-test-buildkite-build-id").id)')
 
 echo "Deployment found (ID: $DEPLOYMENT_ID)."
 
-curl -s --fail \
+curl -s --show-error --fail \
   -X POST \
   -u $USERNAME:$TOKEN \
   -H "Accept: application/vnd.github.ant-man-preview+json" \

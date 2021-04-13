@@ -16,7 +16,7 @@ set +x
 
 echo "Creating Deployment"
 
-DEPLOYMENT_ID=$(curl -s --fail \
+DEPLOYMENT_ID=$(curl -s --show-error --fail \
   -X POST \
   -u $USERNAME:$TOKEN \
   -H "Accept: application/vnd.github.v3+json" \
@@ -30,7 +30,7 @@ DEPLOYMENT_ID=$(curl -s --fail \
 
 echo "Deployment created (ID: $DEPLOYMENT_ID)."
 
-curl -s --fail \
+curl -s --show-error --fail \
   -X POST \
   -u $USERNAME:$TOKEN \
   -H "Accept: application/vnd.github.ant-man-preview+json" \
