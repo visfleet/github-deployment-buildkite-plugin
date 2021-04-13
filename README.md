@@ -10,7 +10,7 @@ Add the following to your `pipeline.yml`:
 steps:
   - command: echo 'Deploy preview created'
     plugins:
-      - ailohq/github-deployment#v1.0.0:
+      - ailohq/github-deployment#v1.0.1:
           # (optional) Names of env variables containing the username and personal access token with `repo_deployment` and `push` permissions.
           # By default set to `GITHUB_USERNAME` and `GITHUB_TOKEN`.
           username-env: GITHUB_USERNAME
