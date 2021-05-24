@@ -10,7 +10,7 @@ Add the following to your `pipeline.yml`:
 steps:
   - command: echo 'Deploy preview created'
     plugins:
-      - ailohq/github-deployment#v1.0.7:
+      - ailohq/github-deployment#v1.0.8:
           username-env: GITHUB_USERNAME
           token-env: GITHUB_TOKEN
           ref: v1.0.0
