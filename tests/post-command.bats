@@ -12,7 +12,12 @@ load '/usr/local/lib/bats/load.bash'
   export BUILDKITE_BUILD_URL=https://buildkite.com/ailohq/github-deployment-buildkite-plugin/builds/test-buildkite-build-id
   export BUILDKITE_COMMAND_EXIT_STATUS=0
 
+  stub buildkite-agent  \
+    "meta-data get "environment_url" --default "" : true"
+
   run "$PWD/hooks/post-command"
 
   assert_success
+
+  unstub buildkite-agent
 }
