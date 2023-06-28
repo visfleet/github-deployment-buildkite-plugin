@@ -59,6 +59,6 @@ curlf \
     \"auto_inactive\":\"false\",\
     \"log_url\":\"$BUILDKITE_BUILD_URL\",\
     \"environment\":\"$ENVIRONMENT\"\
-  }"
+  }" || echo "Failed to set 'pending' status"
 
 echo "Deployment status created (state: pending)"
