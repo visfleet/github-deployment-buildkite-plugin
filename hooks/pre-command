@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -euo pipefail
-
+ERROR_CODE=22
 # Curl that will return non-zero exit code,
 # but still return its' response if it fails.
 # ( https://superuser.com/a/1641410/215321 )
@@ -10,7 +10,7 @@ curlf() {
   HTTP_CODE=$(curl --silent --output $OUTPUT_FILE --write-out "%{http_code}" "$@")
   if [[ ${HTTP_CODE} -lt 200 || ${HTTP_CODE} -gt 299 ]] ; then
     >&2 cat $OUTPUT_FILE
-    exit 22
+    exit $ERROR_CODE
   fi
   cat $OUTPUT_FILE
   rm $OUTPUT_FILE
@@ -49,6 +49,7 @@ echo "Deployment created (ID: $DEPLOYMENT_ID)."
 
 echo "Creating deployment status..."
 
+ERROR_CODE=0
 curlf \
   -X POST \
   -u $USERNAME:$TOKEN \
@@ -59,6 +60,6 @@ curlf \
     \"auto_inactive\":\"false\",\
     \"log_url\":\"$BUILDKITE_BUILD_URL\",\
     \"environment\":\"$ENVIRONMENT\"\
-  }" || echo "Failed to set 'pending' status"
+  }"
 
 echo "Deployment status created (state: pending)"
