@@ -11,7 +11,8 @@ curlf() {
   HTTP_CODE=$(curl --silent --output $OUTPUT_FILE --write-out "%{http_code}" "$@")
   if [[ ${HTTP_CODE} -lt 200 || ${HTTP_CODE} -gt 299 ]] ; then
     >&2 cat $OUTPUT_FILE
-    echo "Received unexpected HTTP status $HTTP_CODE as response"
+    echo "Received unexpected HTTP status $HTTP_CODE as response -- checking rate limits"
+    curl -si "https://api.github.com/users/$USERNAME" | grep 'x-ratelimit'
     exit $EXIT_CODE
   fi
   cat $OUTPUT_FILE
