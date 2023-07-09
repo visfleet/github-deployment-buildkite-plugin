@@ -2,6 +2,7 @@
 
 set -euo pipefail
 
+ERROR_CODE=22
 # Curl that will return non-zero exit code,
 # but still return its' response if it fails.
 # ( https://superuser.com/a/1641410/215321 )
@@ -11,7 +12,7 @@ curlf() {
   if [[ ${HTTP_CODE} -lt 200 || ${HTTP_CODE} -gt 299 ]] ; then
     >&2 cat $OUTPUT_FILE
     echo "Received unexpected HTTP status $HTTP_CODE as response"
-    exit 22
+    exit $EXIT_CODE
   fi
   cat $OUTPUT_FILE
   rm $OUTPUT_FILE
