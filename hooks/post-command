@@ -13,7 +13,7 @@ curlf() {
     >&2 cat $OUTPUT_FILE
     echo "Received unexpected HTTP status $HTTP_CODE as response -- checking rate limits"
     curl -si "https://api.github.com/users/$USERNAME" | grep 'x-ratelimit'
-    exit $EXIT_CODE
+    exit $ERROR_CODE
   fi
   cat $OUTPUT_FILE
   rm $OUTPUT_FILE
